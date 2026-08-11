@@ -1,7 +1,9 @@
 import mysql.connector
 from datetime import datetime
 from app.services.session import session_type, create_token
-import uuid
+#----------MOVIE PLAYER SMALL BREAK----------
+#from app.services.movie_data_collector import get_movie_poster
+#from app.services.movie_scanner import scan_movies
 
 #----------------CREATE THINGS----------------
 # Getting Database Connection
@@ -171,6 +173,22 @@ def get_device(device_id):
     connection.close()
     return data
 
+# Get Device Type
+def get_device_type(device_id, user_id):
+    connection = get_database_connection()
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute(
+        """
+        SELECT device_type
+        FROM devices
+        WHERE id = %s AND user_id = %s
+        """,
+        (device_id, user_id)
+    )
+    data = cursor.fetchone()
+    cursor.close()
+    connection.close()
+    return data["device_type"] if data else None
 # Get Session
 def get_session(user_id, device_id):
     connection = get_database_connection()
@@ -189,6 +207,24 @@ def get_session(user_id, device_id):
     cursor.close()
     connection.close()
     return data
+# Get device by device_type and user_id
+def get_device_by_type(user_id, device_type):
+    connection = get_database_connection()
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute(
+        """
+        SELECT * 
+        FROM devices 
+        WHERE user_id = %s 
+        AND device_type = %s
+        """,
+        (user_id, device_type)
+    )
+    
+    data = cursor.fetchone()
+    cursor.close()
+    connection.close()
+    return data if data else None
 
 def validate_session(token):
     connection = get_database_connection()
@@ -219,6 +255,23 @@ def check_session(expiration):
 
     return True
 
+# Updating Last Login Time
+def update_last_login(device_id):
+    connection = get_database_connection()
+    cursor = connection.cursor()
+    cursor.execute(
+        """
+        UPDATE devices
+        SET last_seen = %s
+        WHERE id = %s
+        """,
+        (datetime.now(), device_id)
+    )
+    data = cursor.fetchone()
+    connection.commit()
+    cursor.close()
+    connection.close()
+    return data["last_seen"] if data else None
 #------------------MEDIA-----------------
 def get_progress(user_id, movie_id):
     connection = get_database_connection()
@@ -251,3 +304,39 @@ def save_progress(user_id, movie_id, position):
     connection.commit()
     cursor.close()
     connection.close()
+
+# Get Movie poster
+def get_movie_poster(title, year):
+    connection = get_database_connection()
+    cursor = connection.cursor(dictionary=True)
+    if year is None:
+        cursor.execute(
+            """
+            SELECT poster_path
+            FROM movies
+            WHERE title = %s
+            LIMIT 1
+            """,
+            (title,)
+        )
+    else:
+        cursor.execute(
+            """
+            SELECT poster_path
+            FROM movies
+            WHERE title = %s
+            AND year = %s
+            LIMIT 1
+            """,
+            (title, year)
+        )
+    data = cursor.fetchone()
+    cursor.close()
+    connection.close()
+    return data
+
+# Setting up all movies 
+def create_all_movies():
+    scan_movies()
+    
+    return data

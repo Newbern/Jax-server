@@ -1,13 +1,15 @@
 from fastapi import FastAPI
-from app.api import auth, media
+from app.api import auth
 from app.logs.log import log
 from contextlib import asynccontextmanager
 
 
+#----------MOVIE PLAYER SMALL BREAK----------
+# from app.services.movie_scanner import scan_movies
+# from app.services.movie_data_collector import get_movie_poster
 
-from app.services.movie_scanner import scan_movies
-
-scan_movies()
+# #scan_movies()
+# print(get_movie_poster())
 
 
 
@@ -24,9 +26,18 @@ async def lifespan(app: FastAPI):
 # Creating Connection
 app = FastAPI(title="Jax Server", lifespan=lifespan)
 
+
+
+
+from fastapi.staticfiles import StaticFiles
+app.mount("/web", StaticFiles(directory="app/web"), name="web")
+
+
+
+
+
 # Adding Routes
 app.include_router(auth.router)
-app.include_router(media.router)
 
 
 

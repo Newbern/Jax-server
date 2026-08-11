@@ -1,8 +1,8 @@
 from pathlib import Path
+import re
 from app.database.database import get_database_connection
 
-
-MOVIE_DIR = Path("D:\Movie Collection")
+MOVIE_DIR = Path(r"D:\Movie Collection")
 
 
 def scan_movies():
@@ -23,20 +23,35 @@ def scan_movies():
                     filename = movie.name
                     filepath = str(movie)
 
-                    print("Found:", filename)
+                    # Remove file extension
+                    title = movie.stem
+
+                    # Default year
+                    year = None
+
+                    # Look for "(1997)" at the end of the title
+                    match = re.search(r"\((\d{4})\)$", title)
+
+                    if match:
+                        year = int(match.group(1))
+                        title = re.sub(r"\s*\(\d{4}\)$", "", title)
+
+                    print(f"Found: {title} ({year})")
 
                     cursor.execute(
                         """
                         INSERT INTO movies(
                             title,
+                            year,
                             genre,
                             filename,
                             filepath
                         )
-                        VALUES(%s,%s,%s,%s)
+                        VALUES(%s,%s,%s,%s,%s)
                         """,
                         (
-                            movie.stem,
+                            title,
+                            year,
                             genre,
                             filename,
                             filepath

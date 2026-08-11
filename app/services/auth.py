@@ -1,26 +1,88 @@
 from app.database.database import *
 from app.security.hashing import *
 from app.logs.log import log
+from app.services.session import cookie
 
-def cookie(response, token, device_type):
-    # Getting the Expiration date of the device based on its type
-    expires = datetime.now() + session_type(device_type)
+def web_login(request, response):
+    try:
+        # Getting User
+        user = get_email(request.email)
 
-    # Converting to seconds
-    seconds = int((expires - datetime.now()).total_seconds())
+        # Checking to see if user exists
+        if user is None:
+            return {
+                "success": False,
+                "message": "User not found"
+            }
 
-    print("SETTING COOKIE:", token)
+        # Checking Password
+        if not verify_password(user['password'], request.password):
+            log.warning(
+                "Invalid password",
+                extra={
+                    "user_id": user["id"]
+                }
+            )
 
-    # Saving Cookie to Web
-    response.set_cookie(
-        key="session_token",
-        value=token,
-        httponly=True,
-        secure=False,
-        max_age=seconds
+            return {
+                "success": False,
+                "message": "Invalid password"
+            }
+
+        # Getting Device_id
+        device_id = get_device_by_type(user["id"], request.device_type)
+
+        # Checking to see if session exists
+        if device_id is None:
+            log.error(
+                f"Login error: No device_id found for user '{user['id']}' and device type '{request.device_type}'",
+                extra={
+                    "user_id": user["id"], 
+                    "device_type ": request.device_type
+                },
+                exc_info=True
+            )
+            return {
+                "success": False,
+                "message": "Incorrect device type"
+            }
+
+        # Saving cookie to web
+        session = get_session(user["id"], device_id["id"])
+        device_type = request.device_type
+        cookie(response, session, device_type)
+
+        # Updating the last login time for the user
+        last_seen = update_last_login(device_id["id"])
+        log.info(
+            "User last seen updated",
+            extra={
+                "user_id": user["id"]
+            })
+
+        return {
+            "success": True,
+            "session": session
+        }
+
+    except Exception as e:
+        log.error(
+            f"Login error: {e}",
+            extra={
+                "user_id": getattr(user, "id", "UNKNOWN")
+            },
+            exc_info=True
         )
 
-def login(request, response):
+        return {
+            "success": False,
+            "message": "Login failed"
+        }
+        
+        
+
+
+def device_login(request, response):
     try:
         # Getting Device
         device_id = request.device_id
