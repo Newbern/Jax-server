@@ -1,9 +1,6 @@
 import mysql.connector
 from datetime import datetime
-from app.services.session import session_type, create_token
-#----------MOVIE PLAYER SMALL BREAK----------
-#from app.services.movie_data_collector import get_movie_poster
-#from app.services.movie_scanner import scan_movies
+from app.security.session import session_type, create_token
 
 #----------------CREATE THINGS----------------
 # Getting Database Connection
@@ -243,6 +240,8 @@ def validate_session(token):
     cursor.close()
     connection.close()
     return data
+
+
     
 #-----------------SECURITY===============
 
@@ -273,70 +272,3 @@ def update_last_login(device_id):
     connection.close()
     return data["last_seen"] if data else None
 #------------------MEDIA-----------------
-def get_progress(user_id, movie_id):
-    connection = get_database_connection()
-    cursor = connection.cursor(dictionary=True)
-    cursor.execute("""
-        SELECT position
-        FROM media
-        WHERE user_id=? AND movie_id=?
-    """, (user_id, movie_id))
-
-    data = cursor.fetchone()
-    cursor.close()
-    connection.close()
-    return data
-
-def save_progress(user_id, movie_id, position):
-    connection = get_database_connection()
-    cursor = connection.cursor()
-    cursor.execute("""
-        INSERT INTO media(
-            user_id,
-            movie_id,
-            position
-        )
-        VALUES (%s, %s, %s)
-        ON DUPLICATE KEY UPDATE
-            position = VALUES(position)
-    """, (user_id, movie_id, position))
-
-    connection.commit()
-    cursor.close()
-    connection.close()
-
-# Get Movie poster
-def get_movie_poster(title, year):
-    connection = get_database_connection()
-    cursor = connection.cursor(dictionary=True)
-    if year is None:
-        cursor.execute(
-            """
-            SELECT poster_path
-            FROM movies
-            WHERE title = %s
-            LIMIT 1
-            """,
-            (title,)
-        )
-    else:
-        cursor.execute(
-            """
-            SELECT poster_path
-            FROM movies
-            WHERE title = %s
-            AND year = %s
-            LIMIT 1
-            """,
-            (title, year)
-        )
-    data = cursor.fetchone()
-    cursor.close()
-    connection.close()
-    return data
-
-# Setting up all movies 
-def create_all_movies():
-    scan_movies()
-    
-    return data

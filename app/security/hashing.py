@@ -12,8 +12,5 @@ def hash_password(password: str):
 
     return hashed_password.decode("utf-8")
 
-def verify_password(user_password, stored_password):
-    password = user_password.encode("utf-8")
-    stored_password = stored_password.encode("utf-8")
-
-    return bcrypt.checkpw(stored_password, password)
+def verify_password(database_password, input_password):
+    return bcrypt.checkpw(input_password.encode("utf-8"), database_password.encode("utf-8"))

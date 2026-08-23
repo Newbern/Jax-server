@@ -1,17 +1,8 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from app.api import auth
 from app.logs.log import log
 from contextlib import asynccontextmanager
-
-
-#----------MOVIE PLAYER SMALL BREAK----------
-# from app.services.movie_scanner import scan_movies
-# from app.services.movie_data_collector import get_movie_poster
-
-# #scan_movies()
-# print(get_movie_poster())
-
-
 
 
 # Logs
@@ -23,16 +14,11 @@ async def lifespan(app: FastAPI):
 
     log.info("JAX server Shutting Down")
 
+
 # Creating Connection
 app = FastAPI(title="Jax Server", lifespan=lifespan)
-
-
-
-
-from fastapi.staticfiles import StaticFiles
+# Mounting Static Files
 app.mount("/web", StaticFiles(directory="app/web"), name="web")
-
-
 
 
 

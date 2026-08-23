@@ -1,11 +1,13 @@
 from app.database.database import *
 from app.security.hashing import *
+from app.security.session import *
 from app.logs.log import log
-from app.services.session import cookie
+
 
 def web_login(request, response):
     try:
         # Getting User
+        user = "UNKNOWN"
         user = get_email(request.email)
 
         # Checking to see if user exists
@@ -47,8 +49,14 @@ def web_login(request, response):
                 "message": "Incorrect device type"
             }
 
-        # Saving cookie to web
+        
+        # Checking to see if session is not expired if so it will create a new session
         session = get_session(user["id"], device_id["id"])
+        if not check_session(session['expires_at']):
+            delete_session(session["session_token"])
+            session = create_session(user["id"], device_id["id"], request.device_type)
+
+        # Saving cookie to web
         device_type = request.device_type
         cookie(response, session, device_type)
 
@@ -82,7 +90,7 @@ def web_login(request, response):
         
 
 
-def device_login(request, response):
+async def device_login(request):
     try:
         # Getting Device
         device_id = request.device_id
@@ -122,19 +130,13 @@ def device_login(request, response):
         # Checking to see if Session has Expired if so it will Create a new Session
         if not check_session(session["expires_at"]):
             delete_session(session["session_token"])
-            session = create_session(user_id, device["device_id"], device["device_type"])
-
-            # Saving cookie to web
-            cookie(response, session, device["device_type"])
+            session = create_session(user_id, device_id, device["device_type"])
 
             # Creates a new session as well as returns the new token
             return {
                 "success": True,
                 "session": session
             }
-
-        # Saving cookie to web
-        cookie(response, session["session_token"], device["device_type"])
 
         # If the session is not expired return session_token
         return {
@@ -158,7 +160,7 @@ def device_login(request, response):
             "message": "Device not detected"
         }
 
-def register(request):
+async def register(request):
     # Checking to see if email exists
     existing = get_email(request.email)
 

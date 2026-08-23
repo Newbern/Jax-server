@@ -18,7 +18,6 @@ def session_type(device_type):
 
     return length
 
-
 def create_token():
     return secrets.token_hex(32)
 
