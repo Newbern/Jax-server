@@ -32,42 +32,53 @@ CREATE TABLE sessions (
     FOREIGN KEY (device_id) REFERENCES devices(id) ON DELETE CASCADE
 );
 
-CREATE TABLE smart_plug (
+CREATE TABLE alarms (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    device_id INT NOT NULL,
-    plug_name VARCHAR(100) NOT NULL,
-    status ENUM('ON', 'OFF') DEFAULT 'OFF',
+    user_id INT NOT NULL,
+    time TIME NOT NULL,
+    day ENUM('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday') NOT NULL,
+    message VARCHAR(255) NOT NULL,
+    is_repeat BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (device_id) REFERENCES devices(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-CREATE TABLE media (
-	id INT NULL,
-	user_id INT NULL,
-	movie VARCHAR(50) NULL DEFAULT NULL,
-	position INT NULL DEFAULT NULL
-)
+-- CREATE TABLE smart_plug (
+--     id INT AUTO_INCREMENT PRIMARY KEY,
+--     device_id INT NOT NULL,
+--     plug_name VARCHAR(100) NOT NULL,
+--     status ENUM('ON', 'OFF') DEFAULT 'OFF',
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     FOREIGN KEY (device_id) REFERENCES devices(id) ON DELETE CASCADE
+-- );
 
-CREATE TABLE movies (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+-- CREATE TABLE media (
+-- 	id INT NULL,
+-- 	user_id INT NULL,
+-- 	movie VARCHAR(50) NULL DEFAULT NULL,
+-- 	position INT NULL DEFAULT NULL
+-- )
 
-    title VARCHAR(255) NOT NULL,
-    year INT,
+-- CREATE TABLE movies (
+--     id INT AUTO_INCREMENT PRIMARY KEY,
 
-    genre VARCHAR(100),
+--     title VARCHAR(255) NOT NULL,
+--     year INT,
 
-    filename VARCHAR(255),
-    filepath TEXT,
+--     genre VARCHAR(100),
 
-    poster_path TEXT,
-    backdrop_path TEXT,
+--     filename VARCHAR(255),
+--     filepath TEXT,
 
-    runtime INT,
-    rating FLOAT,
+--     poster_path TEXT,
+--     backdrop_path TEXT,
 
-    overview TEXT,
+--     runtime INT,
+--     rating FLOAT,
 
-    added DATETIME DEFAULT CURRENT_TIMESTAMP,
+--     overview TEXT,
 
-    scanned BOOLEAN DEFAULT FALSE
-);
+--     added DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+--     scanned BOOLEAN DEFAULT FALSE
+-- );

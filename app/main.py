@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from app.api import auth
+from app.api import auth, alarm
 from app.logs.log import log
 from contextlib import asynccontextmanager
 
@@ -24,7 +24,7 @@ app.mount("/web", StaticFiles(directory="app/web"), name="web")
 
 # Adding Routes
 app.include_router(auth.router)
-
+app.include_router(alarm.router)
 
 
 
