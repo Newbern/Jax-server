@@ -36,7 +36,7 @@ CREATE TABLE alarms (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     time TIME NOT NULL,
-    day ENUM('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday') NOT NULL,
+    day ENUM('Everyday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday') NOT NULL,
     message VARCHAR(255) NOT NULL,
     is_repeat BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

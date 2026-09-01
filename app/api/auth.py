@@ -10,11 +10,11 @@ router = APIRouter(prefix="/auth", tags=["Authorization"])
 # Web Pages Login and Signup
 @router.get("/login")
 def login_page():
-    return FileResponse("app/web/login.html")
+    return FileResponse("app/web/auth/login.html")
 
 @router.get("/signup")
 def signup_page():
-    return FileResponse("app/web/signup.html")
+    return FileResponse("app/web/auth/signup.html")
 
 # Web Pages Login and Signup
 @router.post("/login")

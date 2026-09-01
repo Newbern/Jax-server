@@ -1,6 +1,10 @@
 import secrets
 from datetime import datetime, timedelta
 
+# Security
+from fastapi import Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+
 def session_type(device_type):
     WATCH = "watch"
     WEB = "web"
@@ -38,3 +42,10 @@ def cookie(response, token, device_type):
         secure=False,
         max_age=seconds
         )
+
+
+# Security with FastAPI Session Tokens
+security = HTTPBearer()
+def secure_session_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = credentials.credentials
+    return token

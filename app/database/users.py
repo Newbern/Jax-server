@@ -58,10 +58,14 @@ def get_user_by_token(token):
     connection = get_database_connection()
     cursor = connection.cursor(dictionary=True)
     cursor.execute(
-        "SELECT * FROM users WHERE token = %s",
+        "SELECT * FROM sessions WHERE session_token = %s",
         (token,)
     )
+    # Getting Session Token data
     data = cursor.fetchone()
+    # Getting User from the session token data
+    data = get_user(data["user_id"])
+    
     cursor.close()
     connection.close()
     return data if data else None

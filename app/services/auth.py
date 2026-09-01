@@ -8,11 +8,11 @@ from app.security.session import *
 from app.logs.log import log
 
 
-def web_login(request, response):
+async def web_login(request, response):
     try:
         # Getting User
         user = "UNKNOWN"
-        user = get_email(request.email)
+        user = await get_email(request.email)
 
         # Checking to see if user exists
         if user is None:
@@ -36,7 +36,7 @@ def web_login(request, response):
             }
 
         # Getting Device_id
-        device_id = get_device_by_type(user["id"], request.device_type)
+        device_id = await get_device_by_type(user["id"], request.device_type)
 
         # Checking to see if session exists
         if device_id is None:
@@ -55,17 +55,17 @@ def web_login(request, response):
 
         
         # Checking to see if session is not expired if so it will create a new session
-        session = get_session(user["id"], device_id["id"])
-        if not check_session(session['expires_at']):
-            delete_session(session["session_token"])
-            session = create_session(user["id"], device_id["id"], request.device_type)
+        session = await get_session(user["id"], device_id["id"])
+        if not await check_session(session['expires_at']):
+            await delete_session(session["session_token"])
+            session = await create_session(user["id"], device_id["id"], request.device_type)
 
         # Saving cookie to web
         device_type = request.device_type
         cookie(response, session, device_type)
 
         # Updating the last login time for the user
-        last_seen = update_last_login(device_id["id"])
+        last_seen = await update_last_login(device_id["id"])
         log.info(
             "User last seen updated",
             extra={
@@ -98,7 +98,7 @@ async def device_login(request):
     try:
         # Getting Device
         device_id = request.device_id
-        device = get_device(device_id)
+        device = await get_device(device_id)
 
         # Checking to see if device exists
         if device is None:
@@ -125,16 +125,16 @@ async def device_login(request):
         user_id = device['user_id']
 
         # Getting Session for the Device Being Used
-        session = get_session(user_id, device_id)
+        session = await get_session(user_id, device_id)
 
         if session is None:
             log.warning("Login attempted with unknown device", extra={"user_id": user_id, "device_id": device_id})
             return None
 
         # Checking to see if Session has Expired if so it will Create a new Session
-        if not check_session(session["expires_at"]):
-            delete_session(session["session_token"])
-            session = create_session(user_id, device_id, device["device_type"])
+        if not await check_session(session["expires_at"]):
+            await delete_session(session["session_token"])
+            session = await create_session(user_id, device_id, device["device_type"])
 
             # Creates a new session as well as returns the new token
             return {
@@ -166,7 +166,7 @@ async def device_login(request):
 
 async def register(request):
     # Checking to see if email exists
-    existing = get_email(request.email)
+    existing = await get_email(request.email)
 
     if existing:
         return {
@@ -179,13 +179,14 @@ async def register(request):
 
 
     # Creating User & return Id
-    user_id = create_user(request.username, request.email, password_hash)
+    user_id = await create_user(request.username, request.email, password_hash)
 
     # Creating Device & return Id
-    device_id = create_device(user_id, request.device_type)
+    device_id = await create_device(user_id, request.device_type)
+
 
     # Creating Session & returning session_token
-    session = create_session(
+    session = await create_session(
         user_id,
         device_id,
         request.device_type

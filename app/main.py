@@ -1,6 +1,9 @@
 from fastapi import FastAPI
+# Web Static Files
 from fastapi.staticfiles import StaticFiles
+# Importing Routers
 from app.api import auth, alarm
+# Logs
 from app.logs.log import log
 from contextlib import asynccontextmanager
 
@@ -15,10 +18,12 @@ async def lifespan(app: FastAPI):
     log.info("JAX server Shutting Down")
 
 
+
+
 # Creating Connection
 app = FastAPI(title="Jax Server", lifespan=lifespan)
 # Mounting Static Files
-app.mount("/web", StaticFiles(directory="app/web"), name="web")
+app.mount("/web", StaticFiles(directory="app/web/auth"), name="web")
 
 
 
