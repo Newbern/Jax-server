@@ -18,12 +18,12 @@ def signup_page():
 
 # Web Pages Login and Signup
 @router.post("/login")
-def signin(request: LoginRequest, response: Response):
-    return web_login(request, response)
+async def signin(request: LoginRequest, response: Response):
+    return await web_login(request, response)
 
 @router.post("/signup")
-def signup(request: RegisterRequest):
-    return register(request)
+async def signup(request: RegisterRequest):
+    return await register(request)
 
 # API Endpoints for Device Login
 @router.post("/device-login")

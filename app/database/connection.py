@@ -1,13 +1,13 @@
-import mysql.connector
+import aiomysql
 
 # Getting Database Connection
-def get_database_connection():
+async def get_database_connection():
     # Settings up connection to database
-    return mysql.connector.connect(
+    return await aiomysql.connect(
         host="localhost",
         user="root",
         password="",
-        database="jax_server"
+        db="jax_server"
     )
 
 # Creating Database

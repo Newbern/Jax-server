@@ -1,71 +1,84 @@
-from app.database.connection import get_database_connection
+from app.database.connection import *
 
 
 #----------------CREATE----------------
 # Creating User
-def create_user(username, email, password):
-    connection = get_database_connection()
-    cursor = connection.cursor(dictionary=True)
+async def create_user(username, email, password):
+    connection = await get_database_connection()
 
-    cursor.execute(
-        """
-        INSERT INTO users
-        (username, email, password)
-        VALUES (%s, %s, %s)
-        """,
-        (
-            username,
-            email,
-            password
+    async with connection.cursor() as cursor:
+        await cursor.execute(
+            """
+            INSERT INTO users
+            (username, email, password)
+            VALUES (%s, %s, %s)
+            """,
+            (
+                username,
+                email,
+                password
+            )
         )
-    )
 
-    data = cursor.lastrowid
-    connection.commit()
-    cursor.close()
+        data = cursor.lastrowid
+        await connection.commit()
+
     connection.close()
 
     return data
+
 
 #----------------GET----------------
 # Get User
-def get_user(user_id):
-    connection = get_database_connection()
-    cursor = connection.cursor(dictionary=True)
-    cursor.execute(
-        "SELECT * FROM users WHERE id = %s",
-        (user_id,)
-    )
-    data = cursor.fetchone()
-    cursor.close()
+async def get_user(user_id):
+    connection = await get_database_connection()
+
+    async with connection.cursor(aiomysql.DictCursor) as cursor:
+        await cursor.execute(
+            "SELECT * FROM users WHERE id = %s",
+            (user_id,)
+        )
+
+        data = await cursor.fetchone()
+
     connection.close()
+
     return data
+
 
 # Get User By Email
-def get_email(email):
-    connection = get_database_connection()
-    cursor = connection.cursor(dictionary=True)
-    cursor.execute(
-        "SELECT * FROM users WHERE email = %s",
-        (email,)
-    )
-    data = cursor.fetchone()
-    cursor.close()
+async def get_email(email):
+    connection = await get_database_connection()
+
+    async with connection.cursor(aiomysql.DictCursor) as cursor:
+        await cursor.execute(
+            "SELECT * FROM users WHERE email = %s",
+            (email,)
+        )
+
+        data = await cursor.fetchone()
+
     connection.close()
+
     return data
 
-def get_user_by_token(token):
-    connection = get_database_connection()
-    cursor = connection.cursor(dictionary=True)
-    cursor.execute(
-        "SELECT * FROM sessions WHERE session_token = %s",
-        (token,)
-    )
-    # Getting Session Token data
-    data = cursor.fetchone()
-    # Getting User from the session token data
-    data = get_user(data["user_id"])
-    
-    cursor.close()
+
+async def get_user_by_token(token):
+    connection = await get_database_connection()
+
+    async with connection.cursor(aiomysql.DictCursor) as cursor:
+        await cursor.execute(
+            "SELECT * FROM sessions WHERE session_token = %s",
+            (token,)
+        )
+
+        # Getting Session Token data
+        data = await cursor.fetchone()
+
     connection.close()
-    return data if data else None
+
+    if not data:
+        return None
+
+    # Getting User from the session token data
+    return await get_user(data["user_id"])
