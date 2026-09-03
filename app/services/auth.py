@@ -56,7 +56,7 @@ async def web_login(request, response):
         
         # Checking to see if session is not expired if so it will create a new session
         session = await get_session(user["id"], device_id["id"])
-        if not await check_session(session['expires_at']):
+        if not  check_session(session['expires_at']):
             await delete_session(session["session_token"])
             session = await create_session(user["id"], device_id["id"], request.device_type)
 

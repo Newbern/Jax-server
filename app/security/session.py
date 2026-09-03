@@ -2,8 +2,7 @@ import secrets
 from datetime import datetime, timedelta
 
 # Security
-from fastapi import Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import Cookie, HTTPException, Depends
 
 def session_type(device_type):
     WATCH = "watch"
@@ -44,8 +43,9 @@ def cookie(response, token, device_type):
         )
 
 
-# Security with FastAPI Session Tokens
-security = HTTPBearer()
-def secure_session_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    token = credentials.credentials
-    return token
+# Security with FastAPI by browser cookies
+
+def secure_session_token(session_token: str | None = Cookie(default=None)):
+    if not session_token:
+        raise HTTPException(status_code=401, detail="Session token is missing")
+    return session_token

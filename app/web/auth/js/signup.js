@@ -1,18 +1,25 @@
 
 document.getElementById("signupForm").addEventListener("submit", async (event) => {
+
     event.preventDefault();
 
     const username = document.getElementById("username").value;
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
+    const message = document.getElementById("message");
+
     try {
+
         const response = await fetch("/auth/signup", {
             method: "POST",
+
             headers: {
                 "Content-Type": "application/json"
             },
+
             credentials: "include",
+
             body: JSON.stringify({
                 username: username,
                 email: email,
@@ -23,16 +30,27 @@ document.getElementById("signupForm").addEventListener("submit", async (event) =
 
         const data = await response.json();
 
-        document.getElementById("message").innerText =
-            `Status: ${response.status}\n${JSON.stringify(data)}`;
+        if (!response.ok) {
 
-        if (response.ok) {
-            // window.location.href = "/web/login.html";
+            message.textContent =
+                data.detail || "Signup failed.";
+
+            return;
         }
 
+        message.textContent =
+            "Account created successfully!";
+
+        // Send them to login
+        setTimeout(() => {
+            window.location.href = "/web/auth/login.html";
+        }, 1000);
+
     } catch (error) {
-        document.getElementById("message").innerText =
-            `Error: ${error}`;
+
+        console.error(error);
+
+        message.textContent =
+            "Unable to connect to Jax server.";
     }
 });
-

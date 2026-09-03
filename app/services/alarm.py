@@ -10,10 +10,10 @@ from app.logs.log import log
 async def create_new_alarm(request, session_token):
 
     # Authenticating User
-    user = authenticate_token(session_token)
+    user = await authenticate_token(session_token)
 
     # Creating Alarm
-    alarm = await create_alarm(user["id"], request)
+    alarm = await create_alarm(user, request)
 
     return {
         "success": True,

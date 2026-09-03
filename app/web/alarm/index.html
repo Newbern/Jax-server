@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Jax Alarm Setup</title>
+
+    <link rel="stylesheet" href="/web/alarm/css/alarm.css">
+</head>
+
+<body>
+
+    <main class="alarm-container">
+
+        <h1>Jax Alarm</h1>
+        <p class="subtitle">Set a new alarm</p>
+
+        <form id="alarmForm">
+
+            <label for="time">Time</label>
+            <input type="time" id="time" required>
+
+
+            <label for="day">Day</label>
+            <select id="day" required>
+                <option value="Everyday">Everyday</option>
+                <option value="Sunday">Sunday</option>
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturday">Saturday</option>
+            </select>
+
+
+            <label for="message">Alarm Message</label>
+            <input
+                type="text"
+                id="message"
+                maxlength="255"
+                placeholder="Wake up!"
+                required
+            >
+
+
+            <label class="repeat-container">
+                <input type="checkbox" id="is_repeat">
+                Repeat alarm
+            </label>
+
+
+            <button type="submit">
+                Set Alarm
+            </button>
+
+        </form>
+
+        <p id="status"></p>
+
+    </main>
+
+    <script src="/web/alarm/js/alarm.js"></script>
+
+</body>
+</html>

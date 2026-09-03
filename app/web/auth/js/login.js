@@ -1,17 +1,23 @@
 
 document.getElementById("loginForm").addEventListener("submit", async (event) => {
+
     event.preventDefault();
 
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
+    const message = document.getElementById("message");
 
     try {
+
         const response = await fetch("/auth/login", {
             method: "POST",
+
             headers: {
                 "Content-Type": "application/json"
             },
+
             credentials: "include",
+
             body: JSON.stringify({
                 email: email,
                 password: password,
@@ -21,15 +27,23 @@ document.getElementById("loginForm").addEventListener("submit", async (event) =>
 
         const data = await response.json();
 
-        document.getElementById("message").innerText =
-            `Status: ${response.status}\n${JSON.stringify(data)}`;
+        if (!response.ok) {
+            message.textContent =
+                data.detail || "Login failed.";
 
-        if (response.ok) {
-            // window.location.href = "/";
+            return;
         }
 
+        message.textContent = "Login successful!";
+
+        // Change this later to your actual home/dashboard
+        window.location.href = "/";
+
     } catch (error) {
-        document.getElementById("message").innerText =
-            `Error: ${error}`;
+
+        console.error(error);
+
+        message.textContent =
+            "Unable to connect to Jax server.";
     }
 });
