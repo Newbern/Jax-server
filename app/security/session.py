@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 # Security
 from fastapi import Cookie, HTTPException, Depends
+import json
 
 def session_type(device_type):
     WATCH = "watch"
@@ -44,8 +45,11 @@ def cookie(response, token, device_type):
 
 
 # Security with FastAPI by browser cookies
-
-def secure_session_token(session_token: str | None = Cookie(default=None)):
+def secure_session_token(session_token = Cookie(default=None)):
     if not session_token:
-        raise HTTPException(status_code=401, detail="Session token is missing")
+        raise HTTPException(
+            status_code=401,
+            detail="Session token is missing"
+        )
+
     return session_token

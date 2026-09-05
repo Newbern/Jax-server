@@ -61,24 +61,3 @@ async def get_email(email):
     connection.close()
 
     return data
-
-
-async def get_user_by_token(token):
-    connection = await get_database_connection()
-
-    async with connection.cursor(aiomysql.DictCursor) as cursor:
-        await cursor.execute(
-            "SELECT * FROM sessions WHERE session_token = %s",
-            (token,)
-        )
-
-        # Getting Session Token data
-        data = await cursor.fetchone()
-
-    connection.close()
-
-    if not data:
-        return None
-
-    # Getting User from the session token data
-    return await get_user(data["user_id"])

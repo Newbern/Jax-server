@@ -1,5 +1,6 @@
 from app.database.connection import *
-from app.database.users import get_user
+from app.database.users import *
+from app.database.devices import *
 from app.security.session import session_type, create_token
 from datetime import datetime
 
@@ -55,7 +56,7 @@ async def get_session(user_id, device_id):
 
     connection.close()
 
-    return data
+    return data if data else None
 
 
 async def validate_session(token):
@@ -80,17 +81,45 @@ async def validate_session(token):
 
     return await get_user(data["user_id"])
 
+async def get_user_by_token(token):
+    connection = await get_database_connection()
 
-# Checking to see if Session Expires
-def check_session(expiration):
-    if expiration is None:
-        return False
+    async with connection.cursor(aiomysql.DictCursor) as cursor:
+        await cursor.execute(
+            "SELECT * FROM sessions WHERE session_token = %s",
+            (token,)
+        )
 
-    if expiration < datetime.now():
-        return False
+        # Getting Session Token data
+        data = await cursor.fetchone()
 
-    return True
+    connection.close()
 
+    if not data:
+        return None
+
+    # Getting User from the session token data
+    return await get_user(data["user_id"])
+
+async def get_device_by_token(token):
+    connection = await get_database_connection()
+
+    async with connection.cursor(aiomysql.DictCursor) as cursor:
+        await cursor.execute(
+            "SELECT * FROM sessions WHERE session_token = %s",
+            (token,)
+        )
+
+        # Getting Session Token data
+        data = await cursor.fetchone()
+
+    connection.close()
+
+    if not data:
+        return None
+
+    # Getting Device from the session token data
+    return await get_device(data["device_id"])
 
 #----------------DELETE----------------
 # Delete Session

@@ -23,8 +23,8 @@ async def lifespan(app: FastAPI):
 # Creating Connection
 app = FastAPI(title="Jax Server", lifespan=lifespan)
 # Mounting Static Files
-app.mount("/web", StaticFiles(directory="app/web/", html=True), name="web")
-app.mount("/alarm-web", StaticFiles(directory="app/web/alarm", html=True), name="alarm-web")
+#app.mount("/web", StaticFiles(directory="app/web/", html=True), name="web")
+#app.mount("/alarm-web", StaticFiles(directory="app/web/alarm", html=True), name="alarm-web")
 
 
 # Adding Routes

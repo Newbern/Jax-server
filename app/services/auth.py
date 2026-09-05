@@ -6,6 +6,7 @@ from app.database.devices import *
 from app.security.hashing import *
 from app.security.session import *
 from app.logs.log import log
+from app.utils.auth import *
 
 
 async def web_login(request, response):
@@ -54,15 +55,19 @@ async def web_login(request, response):
             }
 
         
-        # Checking to see if session is not expired if so it will create a new session
+        # Checking to see if session exists or is expired
         session = await get_session(user["id"], device_id["id"])
-        if not  check_session(session['expires_at']):
-            await delete_session(session["session_token"])
-            session = await create_session(user["id"], device_id["id"], request.device_type)
+        token = session["session_token"]
+        checking = await authenticate_token(token)
+        if checking is False:
+            return {
+                "success": False,
+                "message": "Does not have a valid session"
+            }
 
         # Saving cookie to web
         device_type = request.device_type
-        cookie(response, session, device_type)
+        cookie(response, token, device_type)
 
         # Updating the last login time for the user
         last_seen = await update_last_login(device_id["id"])
@@ -74,7 +79,7 @@ async def web_login(request, response):
 
         return {
             "success": True,
-            "session": session
+            "session": token
         }
 
     except Exception as e:
@@ -129,23 +134,24 @@ async def device_login(request):
 
         if session is None:
             log.warning("Login attempted with unknown device", extra={"user_id": user_id, "device_id": device_id})
-            return None
-
-        # Checking to see if Session has Expired if so it will Create a new Session
-        if not await check_session(session["expires_at"]):
-            await delete_session(session["session_token"])
-            session = await create_session(user_id, device_id, device["device_type"])
-
-            # Creates a new session as well as returns the new token
             return {
-                "success": True,
-                "session": session
+                "success": False,
+                "message": "No session found for this device"
             }
 
-        # If the session is not expired return session_token
+        # Checking to see if session exists or is expired
+        token = session["session_token"]
+        checking = await authenticate_token(token)
+        if checking is False:
+            return {
+                "success": False,
+                "message": "Does not have a valid session"
+            }
+
+        # Returns the authenticated session token
         return {
             "success": True,
-            "session": session["session_token"]
+            "session": token
         }
     
     except Exception as e:
@@ -195,6 +201,6 @@ async def register(request):
     # Returning Token
     return {
         "success": True,
-        "session": session
+        "session": session["session_token"]
     }
 

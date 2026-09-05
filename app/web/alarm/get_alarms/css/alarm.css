@@ -1,0 +1,141 @@
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f6f8;
+    color: #222;
+}
+
+.alarm-container {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+.alarm-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.alarm-header h1 {
+    font-size: 32px;
+    margin-bottom: 5px;
+}
+
+.alarm-header p {
+    color: #777;
+}
+
+#add-alarm {
+    border: none;
+    background: #222;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+#add-alarm:hover {
+    background: #444;
+}
+
+.alarms {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.alarm {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.alarm-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.alarm-time {
+    font-size: 32px;
+    font-weight: bold;
+    min-width: 100px;
+}
+
+.alarm-details h2 {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.alarm-details p {
+    color: #777;
+    font-size: 14px;
+}
+
+.alarm-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.alarm-actions button {
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.edit-button {
+    background: #eee;
+}
+
+.delete-button {
+    background: #eee;
+}
+
+.edit-button:hover,
+.delete-button:hover {
+    background: #ddd;
+}
+
+.loading,
+.no-alarms,
+.error {
+    text-align: center;
+    padding: 50px;
+    color: #777;
+}
+
+@media (max-width: 600px) {
+
+    .alarm-header {
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .alarm {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .alarm-actions {
+        width: 100%;
+    }
+
+    .alarm-actions button {
+        flex: 1;
+    }
+}
