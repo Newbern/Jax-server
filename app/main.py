@@ -12,20 +12,12 @@ from contextlib import asynccontextmanager
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     log.info("JAX server Started")
-
     yield
-
     log.info("JAX server Shutting Down")
-
-
 
 
 # Creating Connection
 app = FastAPI(title="Jax Server", lifespan=lifespan)
-# Mounting Static Files
-#app.mount("/web", StaticFiles(directory="app/web/", html=True), name="web")
-#app.mount("/alarm-web", StaticFiles(directory="app/web/alarm", html=True), name="alarm-web")
-
 
 # Adding Routes
 app.include_router(auth.router)

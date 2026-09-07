@@ -1,11 +1,15 @@
 from fastapi import APIRouter
 from fastapi import Response
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from app.schemas.auth import *
 from app.services.auth import *
 
 # Setting up router
 router = APIRouter(prefix="/auth", tags=["Authorization"])
+
+# Mounting Static Files
+router.mount("/auth-web", StaticFiles(directory="app/web/auth", html=True), name="auth-web")
 
 # Web Pages Login and Signup
 @router.get("/login")

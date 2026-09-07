@@ -1,208 +1,449 @@
-# JAX Server
+# Jax Server
 
-JAX is a personal self-hosted media and device server built with FastAPI.
+Jax is a personal backend server built with **Python, FastAPI, and MySQL**.
 
-The goal of JAX is to become a central server for:
-
-- Movie streaming
-- Device authentication
-- Smart home control
-- Watch connectivity
-- Personal APIs
-- Media tracking
+The goal of Jax is to build a real-world backend system with authentication, session management, device authentication, and an alarm system that can be accessed through a web interface and eventually connected to physical devices.
 
 ---
 
-# Current Features
+## Tech Stack
+
+* **Python**
+* **FastAPI**
+* **Pydantic**
+* **MySQL**
+* **JavaScript**
+* **HTML**
+* **CSS**
+* **REST API**
+* **Git**
+
+---
+
+## Project Structure
+
+```text
+Jax-server/
+│
+├── app/
+│   │
+│   ├── main.py
+│   │
+│   ├── api/
+│   │   ├── auth.py
+│   │   └── alarm.py
+│   │
+│   ├── schemas/
+│   │   ├── auth.py
+│   │   └── alarm.py
+│   │
+│   ├── services/
+│   │   ├── auth.py
+│   │   └── alarm.py
+│   │
+│   ├── database/
+│   │   ├── setup.sql
+│   │   ├── connection.py
+│   │   ├── users.py
+│   │   ├── devices.py
+│   │   ├── sessions.py
+│   │   └── alarm.py
+│   │
+│   ├── security/
+│   │   ├── session.py
+│   │   └── hashing.py
+│   │
+│   ├── logs/
+│   │   └── log.py
+│   │
+│   ├── utils/
+│   │   └── auth.py
+│   │
+│   └── web/
+│       │
+│       ├── auth/
+│       │   ├── login.html
+│       │   ├── signup.html
+│       │   ├── js/
+│       │   │   ├── login.js
+│       │   │   └── signup.js
+│       │   └── css/
+│       │       └── auth.css
+│       │
+│       └── alarm/
+│           ├── get_alarms/
+│           │   ├── index.html
+│           │   ├── js/
+│           │   │   └── alarm.js
+│           │   └── css/
+│           │       └── alarm.css
+│           │
+│           └── create_alarm/
+│               ├── index.html
+│               ├── js/
+│               │   └── alarm.js
+│               └── css/
+│                   └── alarm.css
+│
+├── .env
+├── .gitignore
+├── ideas.md
+└── README.md
+```
+
+---
 
 ## Authentication
 
-JAX currently supports:
+Jax includes an authentication system for users and devices.
 
-- User accounts
-- Device registration
-- API key authentication
-- Session creation
-- Cookie based web authentication
-- Session expiration handling
+### Current functionality
 
-Supported device types:
+* User registration
+* User login
+* Password hashing
+* API key authentication
+* Session creation
+* Session validation
+* Device authentication
+* Protected API requests
 
-- Web
-- Watch
-- Authentication devices
-
----
-
-## Movie Collection
-
-JAX can scan a local movie library and store movie information.
-
-Current scanner:
-
-```
-D:\Movie Collection
-```
-
-Expected structure:
-
-```
-Movie Collection
-│
-├── Action
-│   ├── Movie1.mp4
-│   └── Movie2.mp4
-│
-├── Comedy
-│   ├── Movie3.mp4
-│
-└── Horror
-    └── Movie4.mp4
-```
-
-The scanner currently saves:
-
-- Movie title
-- Genre
-- Filename
-- File path
+Passwords are stored as **hashed passwords**, rather than plain-text passwords.
 
 ---
 
-## Movie Metadata
+## Session System
 
-Connected to:
+Authenticated users receive a session token that can be used to access protected endpoints.
 
-TMDB API
+The general authentication flow is:
 
-Currently planned:
+```text
+User
+ │
+ ▼
+Login
+ │
+ ▼
+FastAPI
+ │
+ ▼
+Authenticate User
+ │
+ ▼
+Create Session
+ │
+ ▼
+Session Token
+ │
+ ▼
+Protected Requests
+```
 
-- Movie posters
-- Backdrops
-- Runtime
-- Ratings
-- Descriptions
-- Release year
+The session functionality is separated into the security, service, and database layers.
 
 ---
 
-# Project Structure
+## Alarm System
 
-```
-Jax-server
+The alarm system is currently one of the main features of Jax.
 
-app
-│
-├── api
-│   ├── auth.py
-│   └── media.py
-│
-├── database
-│   ├── database.py
-│   ├── models.py
-│   └── setup.sql
-│
-├── logs
-│   └── JAX.log
-│
-├── schemas
-│   └── auth.py
-│
-├── security
-│   └── hashing.py
-│
-└── services
-    ├── auth.py
-    ├── movie_scanner.py
-    ├── movie_data_collector.py
-    └── session.py
+Users can manage alarms through the web interface.
+
+### Alarm functionality
+
+* Create alarms
+* Retrieve alarms
+* Edit alarms
+* Delete alarms
+* Turn alarms on/off
+* Set alarm time
+* Set alarm message
+* Manage multiple alarms
+
+An alarm can contain information such as:
+
+```json
+{
+    "time": "05:05",
+    "message": "Wakeup",
+    "turn_on": true
+}
 ```
 
 ---
 
-# Running JAX
+## Alarm CRUD
 
-Start server:
+The alarm system follows standard CRUD operations.
 
+```text
+CREATE
+POST /set-alarm
+
+READ
+GET /get-alarms
+
+UPDATE
+PUT /update-alarm
+
+DELETE
+DELETE /delete-alarm
 ```
-python -m uvicorn app.main:app --reload
+
+The web application communicates with the FastAPI backend using JavaScript.
+
+The alarm interface also includes:
+
+* Edit controls
+* Save changes
+* On/off switch
+* Delete controls
+* Delete confirmation popup
+* Responsive alarm cards
+
+---
+
+## Backend Architecture
+
+Jax separates the backend into multiple layers.
+
+```text
+API
+ │
+ ▼
+Services
+ │
+ ▼
+Database
 ```
 
-Server:
+### API
 
+The API layer handles HTTP requests and responses.
+
+```text
+app/api/
 ```
-http://localhost:8000
+
+### Schemas
+
+Pydantic schemas define and validate incoming data.
+
+```text
+app/schemas/
+```
+
+### Services
+
+Business logic is handled by the service layer.
+
+```text
+app/services/
+```
+
+### Database
+
+Database operations are separated into their own modules.
+
+```text
+app/database/
+```
+
+### Security
+
+Authentication-related security functionality is separated into:
+
+```text
+app/security/
+```
+
+This structure keeps HTTP handling, business logic, database operations, and security concerns separated from each other.
+
+---
+
+## Web Interface
+
+Jax contains a web interface for interacting with the backend.
+
+### Authentication
+
+```text
+app/web/auth/
+```
+
+Includes:
+
+* Login
+* Signup
+* Authentication JavaScript
+* Authentication styling
+
+### Alarms
+
+```text
+app/web/alarm/
+```
+
+Includes:
+
+* Alarm creation
+* Alarm management
+* Alarm editing
+* Alarm deletion
+* Alarm status controls
+
+---
+
+## Database
+
+Jax uses **MySQL** for persistent data storage.
+
+Database functionality is separated into individual modules for:
+
+* Users
+* Devices
+* Sessions
+* Alarms
+
+The database schema can be found at:
+
+```text
+app/database/setup.sql
 ```
 
 ---
 
-# Database
+## Logging
 
-Database:
+Jax includes a logging system for tracking server activity and errors.
 
+```text
+app/logs/
 ```
-jax_server
-```
 
-Current tables:
-
-- users
-- devices
-- sessions
-- movies
-- media
-- smart_plug
+The logging system is used to help debug authentication, database operations, API requests, and other backend problems.
 
 ---
 
-# Current Development Status
+## Running Jax
 
-## Completed
+Clone the repository:
 
-[x] Server foundation
+```bash
+git clone https://github.com/Newbern/Jax-server.git
+cd Jax-server
+```
 
-[x] Database connection
+Create a virtual environment:
 
-[x] User registration
+```bash
+python -m venv venv
+```
 
-[x] Device creation
+Activate the virtual environment on Windows:
 
-[x] Session management
+```bash
+venv\Scripts\activate
+```
 
-[x] Cookie authentication
+Install dependencies:
 
-[x] Movie folder scanner
+```bash
+pip install -r requirements.txt
+```
 
-[x] Movie database storage
+Configure the required environment variables in:
 
+```text
+.env
+```
 
-## In Progress
+Start the FastAPI server:
 
-[ ] Movie poster downloading
+```bash
+uvicorn app.main:app --reload
+```
 
-[ ] Movie metadata population
+FastAPI documentation will be available at:
 
-[ ] Movie streaming endpoint
-
-[ ] Continue watching system
-
-[ ] Web frontend
-
-[ ] Device API
-
-[ ] Smart home controls
-
+```text
+http://127.0.0.1:8000/docs
+```
 
 ---
 
-# Future Goal
+## Development Goals
 
-JAX will become a personal home server that connects:
+Jax is being developed as a practical backend engineering project.
 
-- Computer
-- Raspberry Pi
-- ESP32 watch
-- Smart devices
-- Personal applications
+The project is being used to build experience with:
 
-Everything communicates through the JAX API.
+* HTTP
+* REST APIs
+* FastAPI
+* Pydantic
+* Authentication
+* Session management
+* Password hashing
+* API keys
+* MySQL
+* Database architecture
+* CRUD operations
+* Error handling
+* Logging
+* JavaScript API communication
+* Git
+* Linux
+* Docker
+* Deployment
+* Backend architecture
+
+---
+
+## Future Development
+
+Planned functionality includes expanding Jax into a central backend capable of communicating with multiple clients and physical devices.
+
+The long-term concept is:
+
+```text
+                    ┌──────────────┐
+                    │  JAX SERVER  │
+                    │   FastAPI    │
+                    └──────┬───────┘
+                           │
+              ┌────────────┼────────────┐
+              │            │            │
+              ▼            ▼            ▼
+           Website       Watch       Devices
+              │            │            │
+              └────────────┼────────────┘
+                           │
+                           ▼
+                      ┌──────────┐
+                      │  MySQL   │
+                      └──────────┘
+```
+
+Jax is intended to become a central server for managing users, devices, and services through a single backend.
+
+---
+
+## Project Status
+
+**Active Development**
+
+The current focus is building and improving the authentication and alarm systems while continuing to develop the backend architecture.
+
+---
+
+## Author
+
+**Steven Newbern**
+
+GitHub: **Newbern**
+
+---
+
+Jax is a personal backend development project built to learn, experiment, and develop real-world backend engineering skills.

@@ -38,7 +38,7 @@ CREATE TABLE alarms (
     time TIME NOT NULL,
     day ENUM('Everyday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday') NOT NULL,
     message VARCHAR(255) NOT NULL,
-    is_repeat BOOLEAN DEFAULT FALSE,
+    turn_on BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );

@@ -4,4 +4,14 @@ class AlarmRequest(BaseModel):
     time: str
     day: str
     message: str
-    is_repeat: bool
+    turn_on: bool
+
+class AlarmUpdateRequest(BaseModel):
+    id: int
+    time: str
+    day: str
+    message: str
+    turn_on: bool
+
+class AlarmDeleteRequest(BaseModel):
+    id: int

@@ -43,7 +43,7 @@ document.getElementById("signupForm").addEventListener("submit", async (event) =
 
         // Send them to login
         setTimeout(() => {
-            window.location.href = "/web/auth/login.html";
+            window.location.href = "/web/login.html";
         }, 1000);
 
     } catch (error) {

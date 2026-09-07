@@ -29,8 +29,6 @@ async def authenticate_token(token: str):
         await delete_session(token)
         await create_session(user_id, device_id, device_type)
 
-
-
     # Returning User
     return user
 

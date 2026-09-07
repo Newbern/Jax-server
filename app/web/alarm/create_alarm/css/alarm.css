@@ -1,10 +1,10 @@
-
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    margin: 0;
     min-height: 100vh;
 
     display: flex;
@@ -12,83 +12,179 @@ body {
     align-items: center;
 
     font-family: Arial, sans-serif;
+
     background: #111;
     color: white;
 }
 
 .alarm-container {
     width: 100%;
-    max-width: 450px;
+    max-width: 420px;
 
-    padding: 30px;
+    padding: 35px;
 
     background: #1c1c1c;
+
     border-radius: 12px;
+
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
 }
 
 h1 {
+    text-align: center;
     margin-bottom: 5px;
+
+    font-size: 30px;
 }
 
 .subtitle {
-    margin-top: 0;
-    margin-bottom: 30px;
+    text-align: center;
+
     color: #aaa;
+
+    margin-bottom: 30px;
 }
 
 form {
     display: flex;
     flex-direction: column;
+
     gap: 10px;
 }
 
 label {
     margin-top: 10px;
-}
 
-input,
-select,
-button {
-    width: 100%;
-    padding: 12px;
-
-    border-radius: 6px;
-    border: 1px solid #444;
-
-    font-size: 16px;
+    font-size: 14px;
+    font-weight: 600;
 }
 
 input,
 select {
+    width: 100%;
+
+    padding: 12px;
+
+    border: 1px solid #444;
+    border-radius: 6px;
+
+    font-size: 16px;
+
     background: #292929;
     color: white;
 }
 
-.repeat-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+input:focus,
+select:focus {
+    outline: none;
+
+    border-color: #777;
 }
 
-.repeat-container input {
-    width: auto;
+.switch {
+    position: relative;
+
+    display: inline-block;
+
+    width: 50px;
+    height: 28px;
+
+    margin-top: 15px;
+
+    cursor: pointer;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    background: #444;
+
+    border-radius: 28px;
+
+    transition: 0.2s;
+}
+
+.slider::before {
+    content: "";
+
+    position: absolute;
+
+    width: 22px;
+    height: 22px;
+
+    left: 3px;
+    bottom: 3px;
+
+    background: white;
+
+    border-radius: 50%;
+
+    transition: 0.2s;
+}
+
+.switch input:checked + .slider {
+    background: #fff;
+}
+
+.switch input:checked + .slider::before {
+    transform: translateX(22px);
+
+    background: #111;
 }
 
 button {
+    width: 100%;
+
+    padding: 12px;
+
     margin-top: 20px;
+
+    border: 1px solid #444;
+    border-radius: 6px;
 
     background: #fff;
     color: #111;
 
-    cursor: pointer;
+    font-size: 16px;
     font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s;
 }
 
 button:hover {
     background: #ddd;
 }
 
+.view-alarms-button {
+    margin-top: 0;
+
+    background: #292929;
+    color: white;
+}
+
+.view-alarms-button:hover {
+    background: #333;
+}
+
 #status {
+    min-height: 22px;
+
     margin-top: 20px;
+
     text-align: center;
+
+    font-size: 14px;
 }
