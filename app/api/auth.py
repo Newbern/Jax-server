@@ -33,3 +33,5 @@ async def signup(request: RegisterRequest):
 @router.post("/device-login")
 def login_device(request: DeviceLoginRequest):
     return device_login(request)
+
+# Login out

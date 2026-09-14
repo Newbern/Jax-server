@@ -39,7 +39,7 @@ async def web_login(request, response):
         # Getting Device_id
         device_id = await get_device_by_type(user["id"], request.device_type)
 
-        # Checking to see if session exists
+        # Checking to see if device exists
         if device_id is None:
             log.error(
                 f"Login error: No device_id found for user '{user['id']}' and device type '{request.device_type}'",
@@ -55,9 +55,14 @@ async def web_login(request, response):
             }
 
         
-        # Checking to see if session exists or is expired
+        # Checking to see if session exists
         session = await get_session(user["id"], device_id["id"])
-        token = session["session_token"]
+        if session == None:
+            token = await create_session(user["id"], device_id["id"], request.device_type)
+        else:
+            token = session["session_token"]
+        
+        # Checking to see if token is valid
         checking = await authenticate_token(token)
         if checking is False:
             return {
