@@ -2,7 +2,7 @@ import secrets
 from datetime import datetime, timedelta
 
 # Security
-from fastapi import Cookie, HTTPException, Depends
+from fastapi import Cookie, HTTPException, Depends, Header
 import json
 
 def session_type(device_type):
@@ -45,11 +45,26 @@ def cookie(response, token, device_type):
 
 
 # Security with FastAPI by browser cookies
-def secure_session_token(session_token = Cookie(default=None)):
-    if not session_token:
+# def secure_session_token(session_token = Cookie(default=None)):
+#     if not session_token:
+#         raise HTTPException(
+#             status_code=401,
+#             detail="Session token is missing"
+#         )
+
+#     return session_token
+
+
+def secure_session_token(
+    session_token: str = Cookie(default=None),
+    header_token: str = Header(default=None, alias="X-Session-Token")
+):
+    token = session_token or header_token
+
+    if not token:
         raise HTTPException(
             status_code=401,
             detail="Session token is missing"
         )
 
-    return session_token
+    return token

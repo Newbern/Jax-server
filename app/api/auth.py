@@ -31,7 +31,7 @@ async def signup(request: RegisterRequest):
 
 # API Endpoints for Device Login
 @router.post("/device-login")
-def login_device(request: DeviceLoginRequest):
-    return device_login(request)
+async def login_device(request: DeviceLoginRequest):
+    return await device_login(request)
 
 # Login out
