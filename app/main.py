@@ -2,7 +2,7 @@ from fastapi import FastAPI
 # Web Static Files
 from fastapi.staticfiles import StaticFiles
 # Importing Routers
-from app.api import auth, alarm
+from app.api import auth, alarm, roku
 # Logs
 from app.logs.log import log
 from contextlib import asynccontextmanager
@@ -25,6 +25,7 @@ app.add_middleware(AuthMiddleware)
 # Adding Routes
 app.include_router(auth.router)
 app.include_router(alarm.router)
+app.include_router(roku.router)
 
 
 
