@@ -20,6 +20,8 @@ async def authenticate_token(token: str):
 
     # Getting Session
     session = await get_session(user_id, device_id)
+    if session is None:
+        return False
     token = session["session_token"]
 
     # Sessions Expiration date

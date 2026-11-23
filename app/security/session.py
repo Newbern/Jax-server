@@ -57,9 +57,9 @@ def cookie(response, token, device_type):
 
 def secure_session_token(
     session_token: str = Cookie(default=None),
-    header_token: str = Header(default=None, alias="X-Session-Token")
+    #header_token: str = Header(default=None, alias="X-Session-Token")
 ):
-    token = session_token or header_token
+    token = session_token #or header_token
 
     if not token:
         raise HTTPException(
