@@ -29,5 +29,5 @@ async def roku_command(request, session_token):
         return {"status": "success"}
 
     except Exception as e:
-        log("Roku", f"Error: {str(e)}")
+        log.error(f"Roku Error: {str(e)}")
         raise
